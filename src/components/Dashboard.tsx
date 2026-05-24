@@ -7,7 +7,6 @@ import BatteryIndicator from "./BatteryIndicator";
 import PaceCard from "./PaceCard";
 import SPMCard from "./SPMCard";
 import GoalSetter from "./GoalSetter";
-import LEDToggle from "./LEDToggle";
 
 export default function Dashboard() {
   const { data, connected, error } = useArduinoCloud();
@@ -80,14 +79,15 @@ export default function Dashboard() {
 
         {/* Stats row */}
         <div className="grid grid-cols-2 gap-3">
-          <PaceCard pace={data.currentPace} status={data.status} />
-          <SPMCard spm={data.currentSPM} />
+          <PaceCard pace={data.currentPace} status={data.currentPace !== "STATIONARY" ? "ACTIVE" : "IDLE"} />
+          <SPMCard spm={data.spm_cloud} />
         </div>
 
         {/* Device row */}
-        <div className="grid grid-cols-2 gap-3">
-          <BatteryIndicator battery={data.Battery} />
-          <LEDToggle ledOn={data.led_switch} onToggle={() => {}} />
+        <div className="flex justify-center">
+          <div className="w-1/2">
+            <BatteryIndicator battery={data.Battery} />
+          </div>
         </div>
 
         {/* Footer wordmark */}

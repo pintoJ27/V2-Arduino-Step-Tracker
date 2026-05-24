@@ -6,20 +6,14 @@ export interface ArduinoData {
   steps: number;
   Battery: number;
   currentPace: string;
-  currentSPM: number;
   spm_cloud: number;
-  status: string;
-  led_switch: boolean;
 }
 
 const DEFAULT_DATA: ArduinoData = {
   steps: 0,
   Battery: 0,
   currentPace: "N/A",
-  currentSPM: 0,
   spm_cloud: 0,
-  status: "N/A",
-  led_switch: false,
 };
 
 export function useArduinoCloud(pollInterval = 3000) {
@@ -32,16 +26,11 @@ export function useArduinoCloud(pollInterval = 3000) {
       const res = await fetch("/api/arduino/properties", { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const props = await res.json();
-      const paceMap: Record<number, string> = { 0: "Stationary", 1: "Walking", 2: "Running" };
-      const paceValue = props.current_pace ?? props.Pace;
       setData({
         steps: props.steps ?? 0,
         Battery: props.Battery ?? 0,
-        currentPace: paceMap[paceValue] ?? (typeof paceValue === "string" ? paceValue : "N/A"),
-        currentSPM: props.spm_cloud ?? 0,
+        currentPace: props.current_pacea ?? "N/A",
         spm_cloud: props.spm_cloud ?? 0,
-        status: props.status ?? "N/A",
-        led_switch: props.led_switch ?? false,
       });
       setConnected(true);
       setError(null);
