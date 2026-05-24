@@ -17,6 +17,7 @@ export async function getAccessToken(): Promise<string> {
       client_secret: process.env.ARDUINO_CLIENT_SECRET!,
       audience: "https://api2.arduino.cc/iot",
     }),
+    cache: "no-store",
   });
 
   if (!res.ok) {

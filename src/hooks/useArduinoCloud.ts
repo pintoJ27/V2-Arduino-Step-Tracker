@@ -29,7 +29,7 @@ export function useArduinoCloud(pollInterval = 3000) {
 
   const fetchProperties = useCallback(async () => {
     try {
-      const res = await fetch("/api/arduino/properties");
+      const res = await fetch("/api/arduino/properties", { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const props = await res.json();
       const paceMap: Record<number, string> = { 0: "Stationary", 1: "Walking", 2: "Running" };

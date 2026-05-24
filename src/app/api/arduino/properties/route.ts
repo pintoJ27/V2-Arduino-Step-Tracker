@@ -14,7 +14,11 @@ export async function GET() {
 
   try {
     const properties = await getProperties(thingId);
-    return NextResponse.json(properties);
+    return NextResponse.json(properties, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    });
   } catch (e) {
     console.error("Arduino API error:", e);
     return NextResponse.json(
