@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getProperties } from "@/lib/arduino";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const thingId = process.env.ARDUINO_THING_ID;
   if (!thingId) {

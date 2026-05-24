@@ -32,11 +32,13 @@ export function useArduinoCloud(pollInterval = 3000) {
       const res = await fetch("/api/arduino/properties");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const props = await res.json();
+      const paceMap: Record<number, string> = { 0: "Stationary", 1: "Walking", 2: "Running" };
+      const paceValue = props.current_pace ?? props.Pace;
       setData({
         steps: props.steps ?? 0,
         Battery: props.Battery ?? 0,
-        currentPace: props.currentPace ?? "N/A",
-        currentSPM: props.currentSPM ?? 0,
+        currentPace: paceMap[paceValue] ?? (typeof paceValue === "string" ? paceValue : "N/A"),
+        currentSPM: props.spm_cloud ?? 0,
         spm_cloud: props.spm_cloud ?? 0,
         status: props.status ?? "N/A",
         led_switch: props.led_switch ?? false,

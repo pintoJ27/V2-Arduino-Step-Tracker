@@ -37,6 +37,7 @@ export async function getProperties(thingId: string) {
     `${ARDUINO_API}/v2/things/${thingId}/properties`,
     {
       headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
     }
   );
 
@@ -71,6 +72,7 @@ export async function setProperty(
     `${ARDUINO_API}/v2/things/${thingId}/properties`,
     {
       headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
     }
   );
   const properties = await propsRes.json();
