@@ -7,6 +7,9 @@ export interface ArduinoData {
   Battery: number;
   currentPace: string;
   spm_cloud: number;
+  calibratingCloud: boolean;
+  resetCloud: boolean;
+  steps_goal: number;
 }
 
 const DEFAULT_DATA: ArduinoData = {
@@ -14,6 +17,9 @@ const DEFAULT_DATA: ArduinoData = {
   Battery: 0,
   currentPace: "N/A",
   spm_cloud: 0,
+  calibratingCloud: false,
+  resetCloud: false,
+  steps_goal: 10000,
 };
 
 export function useArduinoCloud(pollInterval = 3000) {
@@ -31,6 +37,9 @@ export function useArduinoCloud(pollInterval = 3000) {
         Battery: props.Battery ?? 0,
         currentPace: props.current_pacea ?? "N/A",
         spm_cloud: props.spm_cloud ?? 0,
+        calibratingCloud: props.calibratingCloud ?? false,
+        resetCloud: props.resetCloud ?? false,
+        steps_goal: props.steps_goal ?? 10000,
       });
       setConnected(true);
       setError(null);
@@ -46,5 +55,15 @@ export function useArduinoCloud(pollInterval = 3000) {
     return () => clearInterval(interval);
   }, [fetchProperties, pollInterval]);
 
-  return { data, connected, error, refetch: fetchProperties };
+  const setProperty = useCallback(async (propertyName: string, value: unknown) => {
+    const res = await fetch("/api/arduino/property", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ propertyName, value }),
+    });
+    if (!res.ok) throw new Error(`Failed to set ${propertyName}`);
+    await fetchProperties();
+  }, [fetchProperties]);
+
+  return { data, connected, error, refetch: fetchProperties, setProperty };
 }

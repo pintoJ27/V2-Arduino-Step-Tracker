@@ -56,7 +56,7 @@ export async function getProperties(thingId: string) {
   return result;
 }
 
-const WRITABLE_PROPERTIES = ["led_switch"];
+const WRITABLE_PROPERTIES = ["calibratingCloud", "resetCloud", "steps_goal"];
 
 export async function setProperty(
   thingId: string,

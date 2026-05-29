@@ -6,15 +6,19 @@ import { Card, CardHeader, CardContent, CardLabel } from "@/components/ui/card";
 interface GoalSetterProps {
   goal: number;
   onGoalChange: (goal: number) => void;
+  onCloudSync: (goal: number) => Promise<void>;
 }
 
-export default function GoalSetter({ goal, onGoalChange }: GoalSetterProps) {
+export default function GoalSetter({ goal, onGoalChange, onCloudSync }: GoalSetterProps) {
   const [editing, setEditing] = useState(false);
   const [input, setInput] = useState(goal.toString());
 
-  function handleSave() {
+  async function handleSave() {
     const num = parseInt(input, 10);
-    if (num > 0) onGoalChange(num);
+    if (num > 0) {
+      onGoalChange(num);
+      await onCloudSync(num);
+    }
     setEditing(false);
   }
 

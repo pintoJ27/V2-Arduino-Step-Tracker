@@ -7,15 +7,18 @@ import BatteryIndicator from "./BatteryIndicator";
 import PaceCard from "./PaceCard";
 import SPMCard from "./SPMCard";
 import GoalSetter from "./GoalSetter";
+import CalibrateButton from "./CalibrateButton";
+import ResetButton from "./ResetButton";
 
 export default function Dashboard() {
-  const { data, connected, error } = useArduinoCloud();
+  const { data, connected, error, setProperty } = useArduinoCloud();
   const [goal, setGoal] = useState(10000);
 
   useEffect(() => {
-    const saved = localStorage.getItem("stepGoal");
-    if (saved) setGoal(parseInt(saved, 10));
-  }, []);
+    if (data.steps_goal > 0) {
+      setGoal(data.steps_goal);
+    }
+  }, [data.steps_goal]);
 
   function handleGoalChange(newGoal: number) {
     setGoal(newGoal);
@@ -75,7 +78,11 @@ export default function Dashboard() {
         </div>
 
         {/* Goal card */}
-        <GoalSetter goal={goal} onGoalChange={handleGoalChange} />
+        <GoalSetter
+          goal={goal}
+          onGoalChange={handleGoalChange}
+          onCloudSync={(g) => setProperty("steps_goal", g)}
+        />
 
         {/* Stats row */}
         <div className="grid grid-cols-2 gap-3">
@@ -84,11 +91,18 @@ export default function Dashboard() {
         </div>
 
         {/* Device row */}
-        <div className="flex justify-center">
-          <div className="w-1/2">
-            <BatteryIndicator battery={data.Battery} />
-          </div>
+        <div className="grid grid-cols-2 gap-3">
+          <BatteryIndicator battery={data.Battery} />
         </div>
+
+        {/* Calibrate */}
+        <CalibrateButton
+          calibrating={data.calibratingCloud}
+          onCalibrate={() => setProperty("calibratingCloud", true)}
+        />
+
+        {/* Reset */}
+        <ResetButton onReset={() => setProperty("resetCloud", true)} />
 
         {/* Footer wordmark */}
         <p className="text-center text-[10px] text-slate-700 tracking-wider uppercase pt-2">
