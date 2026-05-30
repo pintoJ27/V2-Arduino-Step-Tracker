@@ -7,6 +7,7 @@ import BatteryIndicator from "./BatteryIndicator";
 import PaceCard from "./PaceCard";
 import SPMCard from "./SPMCard";
 import GoalSetter from "./GoalSetter";
+import CaloriesCard from "./CaloriesCard";
 import CalibrateButton from "./CalibrateButton";
 import ResetButton from "./ResetButton";
 
@@ -93,6 +94,7 @@ export default function Dashboard() {
         {/* Device row */}
         <div className="grid grid-cols-2 gap-3">
           <BatteryIndicator battery={data.Battery} />
+          <CaloriesCard steps={data.steps} />
         </div>
 
         {/* Calibrate */}
