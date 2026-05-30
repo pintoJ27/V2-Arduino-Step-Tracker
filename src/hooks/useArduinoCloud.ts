@@ -22,9 +22,12 @@ const DEFAULT_DATA: ArduinoData = {
   steps_goal: 10000,
 };
 
+const BOARD_STALE_MS = 6000; // board is "offline" if no update in 6 seconds
+
 export function useArduinoCloud(pollInterval = 3000) {
   const [data, setData] = useState<ArduinoData>(DEFAULT_DATA);
   const [connected, setConnected] = useState(false);
+  const [boardOnline, setBoardOnline] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProperties = useCallback(async () => {
@@ -41,10 +44,21 @@ export function useArduinoCloud(pollInterval = 3000) {
         resetCloud: props.resetCloud ?? false,
         steps_goal: props.steps_goal ?? 10000,
       });
+
+      // Check if the board has sent data recently
+      if (props._lastUpdatedAt) {
+        const lastUpdate = new Date(props._lastUpdatedAt).getTime();
+        const age = Date.now() - lastUpdate;
+        setBoardOnline(age < BOARD_STALE_MS);
+      } else {
+        setBoardOnline(false);
+      }
+
       setConnected(true);
       setError(null);
     } catch (e) {
       setConnected(false);
+      setBoardOnline(false);
       setError((e as Error).message);
     }
   }, []);
@@ -65,5 +79,5 @@ export function useArduinoCloud(pollInterval = 3000) {
     await fetchProperties();
   }, [fetchProperties]);
 
-  return { data, connected, error, refetch: fetchProperties, setProperty };
+  return { data, connected, boardOnline, error, refetch: fetchProperties, setProperty };
 }

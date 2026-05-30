@@ -48,11 +48,16 @@ export async function getProperties(thingId: string) {
 
   const properties = await res.json();
   const result: Record<string, unknown> = {};
+  let latestUpdate = "";
 
   for (const prop of properties) {
     result[prop.variable_name] = prop.last_value;
+    if (prop.value_updated_at && prop.value_updated_at > latestUpdate) {
+      latestUpdate = prop.value_updated_at;
+    }
   }
 
+  result._lastUpdatedAt = latestUpdate;
   return result;
 }
 
