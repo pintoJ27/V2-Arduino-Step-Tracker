@@ -10,7 +10,7 @@ export default function SPMCard({ spm }: SPMCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardLabel>Cadence</CardLabel>
+        <CardLabel>Avg SPM</CardLabel>
       </CardHeader>
       <CardContent>
         <p className="text-3xl font-bold text-white tabular-nums leading-none">
