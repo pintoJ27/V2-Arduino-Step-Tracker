@@ -10,9 +10,10 @@ import GoalSetter from "./GoalSetter";
 import CaloriesCard from "./CaloriesCard";
 import CalibrateButton from "./CalibrateButton";
 import ResetButton from "./ResetButton";
+import Confetti from "./Confetti";
 
 export default function Dashboard() {
-  const { data, connected, error, setProperty } = useArduinoCloud();
+  const { data, connected, boardOnline, error, setProperty } = useArduinoCloud();
   const [goal, setGoal] = useState(10000);
 
   useEffect(() => {
@@ -26,18 +27,27 @@ export default function Dashboard() {
     localStorage.setItem("stepGoal", newGoal.toString());
   }
 
-  const statusDot = connected
-    ? "bg-emerald-500 animate-pulse"
-    : error
+  const statusDot = !connected
+    ? error
       ? "bg-red-500"
-      : "bg-amber-500 animate-pulse";
-  const statusLabel = connected ? "Live" : error ? "Offline" : "Connecting";
+      : "bg-amber-500 animate-pulse"
+    : boardOnline
+      ? "bg-emerald-500 animate-pulse"
+      : "bg-amber-500";
+  const statusLabel = !connected
+    ? error
+      ? "Offline"
+      : "Connecting"
+    : boardOnline
+      ? "Live"
+      : "Board Offline";
 
   return (
     <div
       className="min-h-screen bg-[#09090f] text-white flex flex-col"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
+      <Confetti active={data.steps >= goal && goal > 0} />
       {/* Header */}
       <header
         className="flex items-center justify-between px-5 pb-3"
